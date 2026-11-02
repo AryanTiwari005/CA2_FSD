@@ -30,8 +30,8 @@ router.post("/feedback", async (req, res) => {
 
 router.get("/feedback", async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 5;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.max(1, parseInt(req.query.limit, 10) || 5);
 
     const feedbacks = await Feedback.find()
       .skip((page - 1) * limit)
@@ -54,7 +54,7 @@ router.patch("/feedback/:id", async (req, res) => {
     const feedback = await Feedback.findByIdAndUpdate(
       req.params.id,
       { status: req.body.status },
-      { new: true }
+      { new: true, runValidators: true }
     );
 
     if (!feedback) {
